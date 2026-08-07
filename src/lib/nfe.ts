@@ -54,7 +54,7 @@ function detectSeller(blob: string): string {
     /vendedor\s*[:\-]\s*([^\n;|.]{2,60})/i.exec(blob) ??
     /operador\s*[:\-]\s*([^\n;|.]{2,60})/i.exec(blob) ??
     /representante\s*[:\-]\s*([^\n;|.]{2,60})/i.exec(blob);
-  return match ? match[1].trim() : "Não informado";
+  return match?.[1] ? match[1].trim() : "Não informado";
 }
 
 /** Parses a Brazilian NFe XML (Tiny/Olist export) into invoice + item data. */

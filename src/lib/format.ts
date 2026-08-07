@@ -17,7 +17,7 @@ export const shortDate = (iso: string) => {
 };
 
 export const monthLabel = (ym: string) => {
-  const [y, m] = ym.split("-");
+  const [y = "", m = ""] = ym.split("-");
   const names = [
     "Jan",
     "Fev",
