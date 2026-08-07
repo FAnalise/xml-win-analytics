@@ -56,7 +56,7 @@ function SettingsPage() {
     mutationFn: async () => {
       const { error } = await supabase
         .from("profiles")
-        .upsert({ id: user!.id, full_name: name, email: user!.email });
+        .upsert({ id: user!.id, full_name: name, email: user!.email ?? null });
       if (error) throw error;
     },
     onSuccess: async () => {
