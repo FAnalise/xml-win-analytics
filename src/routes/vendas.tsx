@@ -147,6 +147,15 @@ function SalesPage() {
         </div>
       </Panel>
 
+      <div className="mt-4 grid gap-4 xl:grid-cols-2">
+        <Panel title="Por plataforma" subtitle="Resultado do período filtrado">
+          <BreakdownTable rows={filtered} dimension="platform" label="Plataforma" />
+        </Panel>
+        <Panel title="Por vendedor" subtitle="Resultado do período filtrado">
+          <BreakdownTable rows={filtered} dimension="seller" label="Vendedor" />
+        </Panel>
+      </div>
+
       <div className="surface-panel mt-4 overflow-x-auto rounded-xl">
         <Table>
           <TableHeader>
