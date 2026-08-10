@@ -70,6 +70,42 @@ export function byPlatform(rows: SaleRow[]) {
 }
 
 export function bySeller(rows: SaleRow[]) {
+  return breakdown(rows, (r) => r.seller).slice(0, 8);
+}
+
+export type Breakdown = {
+  name: string;
+  value: number;
+  cost: number;
+  profit: number;
+  units: number;
+  markup: number | null;
+  margin: number | null;
+};
+
+export function breakdown(rows: SaleRow[], key: (row: SaleRow) => string): Breakdown[] {
+  const map = new Map<string, Breakdown>();
+  for (const row of rows) {
+    const name = key(row) || "—";
+    const current =
+      map.get(name) ??
+      ({ name, value: 0, cost: 0, profit: 0, units: 0, markup: null, margin: null } as Breakdown);
+    current.value += row.totalValue;
+    current.cost += row.totalCost;
+    current.profit += row.profit;
+    current.units += row.quantity;
+    map.set(name, current);
+  }
+  return [...map.values()]
+    .map((g) => ({
+      ...g,
+      markup: g.cost > 0 ? g.value / g.cost : null,
+      margin: g.value > 0 ? (g.profit / g.value) * 100 : null,
+    }))
+    .sort((a, b) => b.value - a.value);
+}
+
+function bySellerLegacy(rows: SaleRow[]) {
   const revenue = groupSum(
     rows,
     (r) => r.seller,
