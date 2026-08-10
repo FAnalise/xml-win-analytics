@@ -1,13 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Coins, Percent, Receipt, ShoppingCart, TrendingUp } from "lucide-react";
+import { Coins, Percent, Receipt, ShoppingCart, TrendingUp, Wallet } from "lucide-react";
 
 import {
+  BreakdownChart,
   MonthlyChart,
-  PlatformChart,
-  SellerChart,
   TopProductsChart,
 } from "@/components/AnalyticsCharts";
 import { AppLayout } from "@/components/AppLayout";
+import { BreakdownTable } from "@/components/BreakdownTable";
 import { Panel } from "@/components/Panel";
 import { StatCard } from "@/components/StatCard";
 import { useSales } from "@/hooks/use-sales";
@@ -39,12 +39,12 @@ function Dashboard() {
 
   return (
     <AppLayout title="Dashboard" description="Visão geral da lucratividade das vendas">
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-6">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard label="Faturamento" value={brl(kpis.revenue)} icon={Coins} />
+        <StatCard label="Custo total" value={brl(kpis.cost)} icon={Wallet} />
         <StatCard
           label="Lucro bruto"
           value={brl(kpis.profit)}
-          hint={`Custo ${brl(kpis.cost)}`}
           icon={TrendingUp}
           tone={kpis.profit >= 0 ? "positive" : "negative"}
         />
@@ -69,11 +69,31 @@ function Dashboard() {
           <Panel title="Lucro por mês" subtitle="Receita menos custo dos produtos">
             <MonthlyChart rows={rows} metric="profit" />
           </Panel>
-          <Panel title="Vendas por plataforma" subtitle="Distribuição do faturamento">
-            <PlatformChart rows={rows} />
+          <Panel title="Faturamento por plataforma" subtitle="Top 8 plataformas">
+            <BreakdownChart rows={rows} dimension="platform" metric="value" />
           </Panel>
-          <Panel title="Ranking de vendedores" subtitle="Top 8 por faturamento">
-            <SellerChart rows={rows} />
+          <Panel title="Lucro por plataforma" subtitle="Lucro bruto por canal de venda">
+            <BreakdownChart rows={rows} dimension="platform" metric="profit" />
+          </Panel>
+          <Panel title="Faturamento por vendedor" subtitle="Top 8 vendedores">
+            <BreakdownChart rows={rows} dimension="seller" metric="value" />
+          </Panel>
+          <Panel title="Lucro por vendedor" subtitle="Lucro bruto por vendedor">
+            <BreakdownChart rows={rows} dimension="seller" metric="profit" />
+          </Panel>
+          <Panel
+            title="Detalhe por plataforma"
+            subtitle="Faturamento, custo, lucro, markup e margem"
+            className="xl:col-span-2"
+          >
+            <BreakdownTable rows={rows} dimension="platform" label="Plataforma" />
+          </Panel>
+          <Panel
+            title="Detalhe por vendedor"
+            subtitle="Faturamento, custo, lucro, markup e margem"
+            className="xl:col-span-2"
+          >
+            <BreakdownTable rows={rows} dimension="seller" label="Vendedor" />
           </Panel>
           <Panel title="Produtos mais vendidos" subtitle="Top 8 por quantidade">
             <TopProductsChart rows={rows} metric="quantity" />

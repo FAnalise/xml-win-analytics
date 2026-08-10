@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 
 import { AppLayout } from "@/components/AppLayout";
+import { BreakdownTable } from "@/components/BreakdownTable";
 import { Panel } from "@/components/Panel";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -145,6 +146,15 @@ function SalesPage() {
           </Button>
         </div>
       </Panel>
+
+      <div className="mt-4 grid gap-4 xl:grid-cols-2">
+        <Panel title="Por plataforma" subtitle="Resultado do período filtrado">
+          <BreakdownTable rows={filtered} dimension="platform" label="Plataforma" />
+        </Panel>
+        <Panel title="Por vendedor" subtitle="Resultado do período filtrado">
+          <BreakdownTable rows={filtered} dimension="seller" label="Vendedor" />
+        </Panel>
+      </div>
 
       <div className="surface-panel mt-4 overflow-x-auto rounded-xl">
         <Table>

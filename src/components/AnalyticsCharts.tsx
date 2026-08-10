@@ -16,8 +16,47 @@ import {
 
 import { EmptyState } from "@/components/Panel";
 import type { SaleRow } from "@/hooks/use-sales";
-import { byMonth, byPlatform, bySeller, topProducts } from "@/lib/aggregate";
+import { breakdown, byMonth, byPlatform, bySeller, topProducts } from "@/lib/aggregate";
 import { brl, monthLabel, qty } from "@/lib/format";
+
+export function BreakdownChart({
+  rows,
+  dimension,
+  metric,
+}: {
+  rows: SaleRow[];
+  dimension: "platform" | "seller";
+  metric: "value" | "profit";
+}) {
+  const data = breakdown(rows, (r) => (dimension === "platform" ? r.platform : r.seller))
+    .sort((a, b) => b[metric] - a[metric])
+    .slice(0, 8)
+    .map((d) => ({ ...d, label: d.name.length > 20 ? `${d.name.slice(0, 20)}…` : d.name }));
+  if (data.length === 0)
+    return (
+      <EmptyState
+        message={
+          dimension === "platform" ? "Sem vendas por plataforma ainda." : "Sem vendedores identificados."
+        }
+      />
+    );
+  return (
+    <ResponsiveContainer width="100%" height={280}>
+      <BarChart data={data} layout="vertical" margin={{ left: 12, right: 16 }}>
+        <CartesianGrid stroke={grid} horizontal={false} />
+        <XAxis type="number" tickFormatter={compact} tickLine={false} axisLine={false} {...axis} />
+        <YAxis type="category" dataKey="label" width={140} tickLine={false} axisLine={false} {...axis} />
+        <Tooltip contentStyle={tooltipStyle} cursor={false} formatter={(v: number) => brl(v)} />
+        <Bar
+          dataKey={metric}
+          name={metric === "value" ? "Faturamento" : "Lucro"}
+          fill={metric === "value" ? "var(--chart-2)" : "var(--chart-1)"}
+          radius={[0, 4, 4, 0]}
+        />
+      </BarChart>
+    </ResponsiveContainer>
+  );
+}
 
 const axis = { stroke: "var(--muted-foreground)", fontSize: 11 };
 const grid = "var(--border)";
