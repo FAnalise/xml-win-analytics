@@ -14,14 +14,14 @@ export function computeKpis(rows: SaleRow[]): Kpis {
   const revenue = rows.reduce((s, r) => s + r.totalValue, 0);
   const cost = rows.reduce((s, r) => s + r.totalCost, 0);
   const units = rows.reduce((s, r) => s + r.quantity, 0);
-  const withCost = rows.filter((r) => r.markup !== null);
+  const withCost = rows.filter((r) => r.totalCost > 0);
   const costed = withCost.reduce((s, r) => s + r.totalCost, 0);
   const costedRevenue = withCost.reduce((s, r) => s + r.totalValue, 0);
   const invoices = new Set(rows.map((r) => r.invoiceNumber)).size;
   return {
     revenue,
     profit: revenue - cost,
-    avgMarkup: costed > 0 ? ((costedRevenue - costed) / costed) * 100 : null,
+    avgMarkup: costed > 0 ? costedRevenue / costed : null,
     units,
     avgTicket: invoices > 0 ? revenue / invoices : 0,
     cost,
