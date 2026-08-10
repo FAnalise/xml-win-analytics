@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 
 import { AppLayout } from "@/components/AppLayout";
+import { BreakdownTable } from "@/components/BreakdownTable";
 import { Panel } from "@/components/Panel";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
