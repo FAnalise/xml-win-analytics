@@ -105,22 +105,6 @@ export function breakdown(rows: SaleRow[], key: (row: SaleRow) => string): Break
     .sort((a, b) => b.value - a.value);
 }
 
-function bySellerLegacy(rows: SaleRow[]) {
-  const revenue = groupSum(
-    rows,
-    (r) => r.seller,
-    (r) => r.totalValue,
-  );
-  const profit = groupSum(
-    rows,
-    (r) => r.seller,
-    (r) => r.profit,
-  );
-  return [...revenue]
-    .map(([name, value]) => ({ name, value, profit: profit.get(name) ?? 0 }))
-    .sort((a, b) => b.value - a.value)
-    .slice(0, 8);
-}
 
 export function topProducts(rows: SaleRow[], metric: "quantity" | "profit") {
   const map = new Map<string, { name: string; quantity: number; profit: number }>();
