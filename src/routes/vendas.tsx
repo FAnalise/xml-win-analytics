@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/table";
 import { useSales } from "@/hooks/use-sales";
 import { computeKpis } from "@/lib/aggregate";
-import { brl, pct, qty, shortDate } from "@/lib/format";
+import { brl, factor, pct, qty, shortDate } from "@/lib/format";
 
 export const Route = createFileRoute("/vendas")({
   head: () => ({
@@ -163,18 +163,19 @@ function SalesPage() {
               <TableHead className="text-right">Custo total</TableHead>
               <TableHead className="text-right">Lucro</TableHead>
               <TableHead className="text-right">Markup</TableHead>
+              <TableHead className="text-right">Margem</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={13} className="text-muted-foreground">
+                <TableCell colSpan={14} className="text-muted-foreground">
                   Carregando…
                 </TableCell>
               </TableRow>
             ) : filtered.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={13} className="text-muted-foreground">
+                <TableCell colSpan={14} className="text-muted-foreground">
                   Nenhuma venda encontrada.
                 </TableCell>
               </TableRow>
@@ -202,7 +203,8 @@ function SalesPage() {
                   >
                     {brl(row.profit)}
                   </TableCell>
-                  <TableCell className="num text-right">{pct(row.markup)}</TableCell>
+                  <TableCell className="num text-right">{factor(row.markup)}</TableCell>
+                  <TableCell className="num text-right">{pct(row.margin)}</TableCell>
                 </TableRow>
               ))
             )}
