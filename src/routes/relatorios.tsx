@@ -52,7 +52,8 @@ function ReportsPage() {
       "Custo unitario",
       "Custo total",
       "Lucro",
-      "Markup %",
+      "Markup (x)",
+      "Margem %",
     ];
     const body = rows.map((r) =>
       [
@@ -70,6 +71,7 @@ function ReportsPage() {
         r.totalCost,
         r.profit,
         r.markup === null ? "" : r.markup.toFixed(2),
+        r.margin === null ? "" : r.margin.toFixed(2),
       ].join(";"),
     );
     const blob = new Blob([[header.join(";"), ...body].join("\n")], {

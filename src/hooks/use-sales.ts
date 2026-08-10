@@ -26,6 +26,7 @@ export type SaleRow = {
   totalCost: number;
   profit: number;
   markup: number | null;
+  margin: number | null;
 };
 
 export function useProducts() {
@@ -90,7 +91,8 @@ export function useSales() {
           unitCost,
           totalCost,
           profit,
-          markup: unitCost > 0 ? ((unitValue - unitCost) / unitCost) * 100 : null,
+          markup: totalCost > 0 ? totalValue / totalCost : null,
+          margin: totalValue > 0 ? (profit / totalValue) * 100 : null,
         });
       }
       rows.sort((a, b) => (a.date < b.date ? 1 : -1));

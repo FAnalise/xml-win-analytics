@@ -12,7 +12,7 @@ import { Panel } from "@/components/Panel";
 import { StatCard } from "@/components/StatCard";
 import { useSales } from "@/hooks/use-sales";
 import { computeKpis } from "@/lib/aggregate";
-import { brl, pct, qty } from "@/lib/format";
+import { brl, factor, pct, qty } from "@/lib/format";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -39,16 +39,22 @@ function Dashboard() {
 
   return (
     <AppLayout title="Dashboard" description="Visão geral da lucratividade das vendas">
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-6">
         <StatCard label="Faturamento" value={brl(kpis.revenue)} icon={Coins} />
         <StatCard
           label="Lucro bruto"
           value={brl(kpis.profit)}
-          hint={`Margem ${pct(kpis.margin)}`}
+          hint={`Custo ${brl(kpis.cost)}`}
           icon={TrendingUp}
           tone={kpis.profit >= 0 ? "positive" : "negative"}
         />
-        <StatCard label="Markup médio" value={pct(kpis.avgMarkup)} icon={Percent} />
+        <StatCard label="Margem média" value={pct(kpis.margin)} icon={Percent} />
+        <StatCard
+          label="Markup médio"
+          value={factor(kpis.avgMarkup)}
+          hint="Venda ÷ custo"
+          icon={Percent}
+        />
         <StatCard label="Produtos vendidos" value={qty(kpis.units)} icon={ShoppingCart} />
         <StatCard label="Ticket médio" value={brl(kpis.avgTicket)} icon={Receipt} />
       </div>

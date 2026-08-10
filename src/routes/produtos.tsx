@@ -55,6 +55,21 @@ function ProductsPage() {
   });
 
   const term = search.trim().toLowerCase();
+
+  function commitCost(id: string, currentCost: number, raw: string | undefined) {
+    if (raw === undefined) return;
+    const parsed = Number(raw.replace(",", "."));
+    setDrafts((prev) => {
+      const next = { ...prev };
+      delete next[id];
+      return next;
+    });
+    if (!Number.isFinite(parsed) || parsed < 0) return;
+    const cost = Math.round(parsed * 100) / 100;
+    if (cost === currentCost) return;
+    saveCost.mutate({ id, cost });
+  }
+
   const filtered = products.filter(
     (p) => !term || p.sku.toLowerCase().includes(term) || p.name.toLowerCase().includes(term),
   );
@@ -108,16 +123,9 @@ function ProductsPage() {
                           onChange={(e) =>
                             setDrafts((prev) => ({ ...prev, [product.id]: e.target.value }))
                           }
-                          onBlur={() => {
-                            if (draft === undefined) return;
-                            const cost = Number(draft.replace(",", "."));
-                            setDrafts((prev) => {
-                              const next = { ...prev };
-                              delete next[product.id];
-                              return next;
-                            });
-                            if (!Number.isFinite(cost) || cost === product.unit_cost) return;
-                            saveCost.mutate({ id: product.id, cost });
+                          onBlur={() => commitCost(product.id, product.unit_cost, draft)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") e.currentTarget.blur();
                           }}
                         />
                         <span className="mt-1 block text-[11px] text-muted-foreground">

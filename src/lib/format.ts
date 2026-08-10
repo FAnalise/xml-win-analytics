@@ -11,6 +11,14 @@ export const pct = (value: number | null) =>
 export const qty = (value: number) =>
   new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 2 }).format(value ?? 0);
 
+export const factor = (value: number | null) =>
+  value === null || !Number.isFinite(value)
+    ? "—"
+    : `${new Intl.NumberFormat("pt-BR", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }).format(value)}x`;
+
 export const shortDate = (iso: string) => {
   const [y, m, d] = iso.split("-");
   return d ? `${d}/${m}/${y}` : iso;
