@@ -105,7 +105,7 @@ function ImportPage() {
         collected.push({
           file: file.name,
           ok: true,
-          message: `NF ${parsed.number} • ${parsed.items.length} item(ns)`,
+          message: `NF ${parsed.number} • ${parsed.items.length} item(ns) • Plataforma: ${parsed.platform} (${parsed.platformSource}) • Vendedor: ${parsed.seller} (${parsed.sellerSource})`,
         });
       } catch (error) {
         collected.push({
