@@ -243,6 +243,7 @@ export function parseNfeXml(xml: string): ParsedInvoice {
     { value: intermedCnpj, source: "infIntermed/CNPJ" },
     { value: intermedName, source: "infIntermed/idCadIntTran" },
     { value: intermedXNome, source: "infIntermed/xNome" },
+    { value: text(ide, "natOp"), source: "ide/natOp" },
     { value: entrega ? text(entrega, "CNPJ") : "", source: "entrega/CNPJ" },
     { value: transporta ? text(transporta, "CNPJ") : "", source: "transporta/CNPJ" },
     { value: destEl ? text(destEl, "CNPJ") : "", source: "dest/CNPJ" },
