@@ -173,6 +173,32 @@ function detectSeller(
 }
 
 /** Parses a Brazilian NFe XML (Tiny/Olist export) into invoice + item data. */
+/**
+ * Regra definitiva de vendedor por plataforma.
+ * Shopee/Amazon sempre usam a própria plataforma como vendedor.
+ * Mercado Livre / Mercado Full / Loja Própria usam o vendedor específico quando existir.
+ */
+function applySellerRules(
+  platform: string,
+  detected: { seller: string; source: string },
+): { seller: string; source: string } {
+  const hasSpecific =
+    Boolean(detected.seller) && !/^n[ãa]o informado$/i.test(detected.seller);
+
+  if (platform === "Shopee" || platform === "Amazon") {
+    return { seller: platform, source: `regra: vendedor = plataforma (${platform})` };
+  }
+  if (hasSpecific) return detected;
+
+  if (platform === "Mercado Livre" || platform === "Mercado Full") {
+    return { seller: "Mercado Livre", source: "regra: sem vendedor específico (Mercado Livre)" };
+  }
+  if (platform === "Loja Própria") {
+    return { seller: "Loja Própria", source: "regra: sem vendedor específico (Loja Própria)" };
+  }
+  return detected;
+}
+
 export function parseNfeXml(xml: string): ParsedInvoice {
   const doc = new DOMParser().parseFromString(xml, "application/xml");
   if (doc.getElementsByTagName("parsererror").length > 0) {
@@ -262,7 +288,8 @@ export function parseNfeXml(xml: string): ParsedInvoice {
     }
   }
 
-  const seller = detectSeller(obsFields, candidates);
+  const detectedSeller = detectSeller(obsFields, candidates);
+  const seller = applySellerRules(platform, detectedSeller);
 
   const items: ParsedItem[] = [];
   for (const det of Array.from(doc.getElementsByTagName("det"))) {
