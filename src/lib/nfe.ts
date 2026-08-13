@@ -145,6 +145,11 @@ function detectPlatform(candidates: Candidate[]): { platform: string; source: st
   // 3) Intermediador informado mas não reconhecido: usa o nome declarado.
   const intermed = candidates.find((c) => c.source === "infIntermed/idCadIntTran" && c.value);
   if (intermed) return { platform: clean(intermed.value), source: intermed.source };
+  // 4) Número do pedido no padrão Mercado Livre (ex.: 2000017898048560).
+  const ped = candidates.find(
+    (c) => c.source === "prod/xPed" && /(^|\s)2000\d{10,}(\s|$)/.test(c.value),
+  );
+  if (ped) return { platform: "Mercado Livre", source: "prod/xPed (padrão de pedido Mercado Livre)" };
   return { platform: "Outros", source: "não identificado" };
 }
 
