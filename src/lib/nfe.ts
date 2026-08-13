@@ -238,6 +238,8 @@ export function parseNfeXml(xml: string): ParsedInvoice {
   const retirada = doc.getElementsByTagName("retirada")[0] ?? null;
   const transporta = doc.getElementsByTagName("transporta")[0] ?? null;
   const infAdic = doc.getElementsByTagName("infAdic")[0] ?? null;
+  const card = doc.getElementsByTagName("card")[0] ?? null;
+  const cardCnpj = card ? text(card, "CNPJ") : "";
 
   const candidates: Candidate[] = [
     { value: intermedCnpj, source: "infIntermed/CNPJ" },
@@ -246,6 +248,7 @@ export function parseNfeXml(xml: string): ParsedInvoice {
     { value: text(ide, "natOp"), source: "ide/natOp" },
     { value: entrega ? text(entrega, "CNPJ") : "", source: "entrega/CNPJ" },
     { value: transporta ? text(transporta, "CNPJ") : "", source: "transporta/CNPJ" },
+    { value: cardCnpj, source: "pag/card/CNPJ" },
     { value: destEl ? text(destEl, "CNPJ") : "", source: "dest/CNPJ" },
     ...obsFields.map(([field, value, tag]) => ({
       value: `${field}: ${value}`,
