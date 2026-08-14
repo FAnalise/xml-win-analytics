@@ -77,21 +77,25 @@ function PriceAnalysisPage() {
   );
 
   const groups = useMemo(() => {
-    const names = new Map<string, { product: string; sku: string }>();
+    const names = new Map<string, Map<string, string>>();
     for (const row of filtered) {
       const key = `${row.platform}${SEP}${row.seller}`;
-      if (!names.has(key)) names.set(key, { product: row.product, sku: row.sku });
+      const bucket = names.get(key) ?? new Map<string, string>();
+      if (!bucket.has(row.sku)) bucket.set(row.sku, row.product);
+      names.set(key, bucket);
     }
     return breakdown(filtered, (r) => `${r.platform}${SEP}${r.seller}`).map((g) => {
       const [platformName = "—", sellerName = "—"] = g.name.split(SEP);
-      const info = names.get(g.name);
+      const bucket = names.get(g.name);
+      const entries = bucket ? [...bucket.entries()] : [];
+      const single = entries.length === 1 ? entries[0] : null;
       return {
         ...g,
         platform: platformName,
         seller: sellerName,
-        product: info?.product ?? "—",
-        sku: info?.sku ?? "—",
-        avgPrice: g.units > 0 ? g.value / g.units : null,
+        product: single ? single[1] : `${entries.length} produtos`,
+        sku: single ? single[0] : "Vários",
+        avgPrice: single && g.units > 0 ? g.value / g.units : null,
       };
     });
   }, [filtered]);
