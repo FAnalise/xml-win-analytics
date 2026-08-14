@@ -316,7 +316,7 @@ function Highlight({
   value,
 }: {
   title: string;
-  group?: Group;
+  group: Group | undefined;
   value: (g: Group) => string;
 }) {
   return (

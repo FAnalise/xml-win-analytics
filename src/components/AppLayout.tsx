@@ -7,6 +7,7 @@ import {
   Menu,
   Package,
   Settings,
+  Tags,
   Upload,
 } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
@@ -22,6 +23,7 @@ const NAV = [
   { to: "/importar", label: "Importar XML", icon: Upload },
   { to: "/produtos", label: "Produtos", icon: Package },
   { to: "/vendas", label: "Vendas", icon: FileText },
+  { to: "/analise-precos", label: "Análise de Preços", icon: Tags },
   { to: "/relatorios", label: "Relatórios", icon: BarChart3 },
   { to: "/configuracoes", label: "Configurações", icon: Settings },
 ] as const;
