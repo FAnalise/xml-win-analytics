@@ -308,7 +308,7 @@ export function parseNfeXml(xml: string): ParsedInvoice {
       );
       const isMeliDelivery = c.source.startsWith("entrega") && matchCnpj(c.value) === "Mercado Livre";
       if (isFullText || isMeliDelivery) {
-        platform = "Mercado Full";
+        platform = "Fulfillment";
         platformSource = c.source;
         break;
       }
