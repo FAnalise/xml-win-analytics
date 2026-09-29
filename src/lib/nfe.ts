@@ -25,7 +25,7 @@ export type ParsedInvoice = {
 const PLATFORMS: Array<[RegExp, string]> = [
   [
     /mercado\s*full|full\s*mercado|fulfillment\s*(do\s*)?mercado|meli\s*full|ml\s*full|mercado\s*liv\w*\s*full|envios?\s*full\b|\bfull\b(?=[^\n]{0,40}mercado)/i,
-    "Mercado Full",
+    "Fulfillment",
   ],
   [
     /mercado\s*liv|mercadolivre|mercadolibre|ebazar|\bmeli\b|\bml\b\s*(venda|pedido|canal)|mercado\s*envios|mercado\s*pago/i,
@@ -164,7 +164,15 @@ function detectSeller(
     }
   }
   // 2) Texto livre, campo a campo (para saber a origem exata).
-  for (const c of blobs) {
+   // Nome do vendedor seguido do e-mail, padrão usado pelo Tiny nas vendas internas.
+  if (c.source === "infAdic/infCpl") {
+    const match = /(?:^|<br\s*\/?>|\n)\s*([A-Za-zÀ-ÿ]+(?:\s+[A-Za-zÀ-ÿ]+){1,3})\s*\/\s*[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}/i.exec(c.value);
+
+    if (match?.[1]) {
+      return { seller: clean(match[1]), source: c.source };
+    }
+  }
+for (const c of blobs) {
     if (!c.value || c.source.includes("CNPJ")) continue;
     for (const label of SELLER_LABELS) {
       const match = new RegExp(`${label}\\s*[:\\-]\\s*([^\\n;|]{2,60})`, "i").exec(c.value);
@@ -195,7 +203,7 @@ function applySellerRules(
   }
   if (hasSpecific) return detected;
 
-  if (platform === "Mercado Livre" || platform === "Mercado Full") {
+  if (platform === "Mercado Livre" || platform === "Fulfillment") {) {
     return { seller: "Mercado Livre", source: "regra: sem vendedor específico (Mercado Livre)" };
   }
   if (platform === "Loja Própria") {
