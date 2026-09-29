@@ -192,13 +192,6 @@ for (const c of blobs) {
     }
   }
 }
-      const match = new RegExp(`${label}\\s*[:\\-]\\s*([^\\n;|]{2,60})`, "i").exec(c.value);
-      const value = match?.[1] ? clean(match[1]) : "";
-      if (value && !/^n[ãa]o\s*informad/i.test(value)) {
-        return { seller: value, source: c.source };
-      }
-    }
-  }
   return { seller: "Não informado", source: "não identificado" };
 }
 
