@@ -164,17 +164,34 @@ function detectSeller(
     }
   }
   // 2) Texto livre, campo a campo (para saber a origem exata).
-   // Nome do vendedor seguido do e-mail, padrão usado pelo Tiny nas vendas internas.
+for (const c of blobs) {
+  if (!c.value || c.source.includes("CNPJ")) continue;
+
+  // Nome do vendedor seguido do e-mail, padrão usado pelo Tiny nas vendas internas.
   if (c.source === "infAdic/infCpl") {
-    const match = /(?:^|<br\s*\/?>|\n)\s*([A-Za-zÀ-ÿ]+(?:\s+[A-Za-zÀ-ÿ]+){1,3})\s*\/\s*[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}/i.exec(c.value);
+    const match =
+      /(?:^|<br\s*\/?>|\n)\s*([A-Za-zÀ-ÿ]+(?:\s+[A-Za-zÀ-ÿ]+){1,3})\s*\/\s*[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}/i.exec(
+        c.value,
+      );
 
     if (match?.[1]) {
       return { seller: clean(match[1]), source: c.source };
     }
   }
-for (const c of blobs) {
-    if (!c.value || c.source.includes("CNPJ")) continue;
-    for (const label of SELLER_LABELS) {
+
+  for (const label of SELLER_LABELS) {
+    const match = new RegExp(
+      `${label}\\s*[:\\-]\\s*([^\\n;|]{2,60})`,
+      "i",
+    ).exec(c.value);
+
+    const value = match?.[1] ? clean(match[1]) : "";
+
+    if (value && !/^n[ãa]o\s*informad/i.test(value)) {
+      return { seller: value, source: c.source };
+    }
+  }
+}
       const match = new RegExp(`${label}\\s*[:\\-]\\s*([^\\n;|]{2,60})`, "i").exec(c.value);
       const value = match?.[1] ? clean(match[1]) : "";
       if (value && !/^n[ãa]o\s*informad/i.test(value)) {
