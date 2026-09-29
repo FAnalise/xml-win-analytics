@@ -213,7 +213,7 @@ function applySellerRules(
   }
   if (hasSpecific) return detected;
 
-  if (platform === "Mercado Livre" || platform === "Fulfillment") { {
+  if (platform === "Mercado Livre" || platform === "Fulfillment") {
     return { seller: "Mercado Livre", source: "regra: sem vendedor específico (Mercado Livre)" };
   }
   if (platform === "Loja Própria") {
