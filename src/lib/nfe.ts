@@ -297,7 +297,7 @@ export function parseNfeXml(xml: string): ParsedInvoice {
   platform === "Mercado Livre" ||
   candidates.some(
     (c) =>
-      c.source === "infAdic/infCpl" &&
+      (c.source === "infAdic" || c.source === "infAdic/infCpl") &&
       /dep[óo]sito\s*tempor[áa]rio/i.test(c.value),
   )
 ) {
