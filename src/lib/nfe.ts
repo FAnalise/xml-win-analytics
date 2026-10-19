@@ -142,7 +142,18 @@ function detectPlatform(candidates: Candidate[]): { platform: string; source: st
     const byText = matchPlatform(c.value);
     if (byText) return { platform: byText, source: c.source };
   }
-  // 3) Intermediador informado mas não reconhecido: usa o nome declarado.
+  // 3) Identificador de pedido do Mercado Livre.
+  const meliExternalId = candidates.find(
+    (c) =>
+      c.source.includes("external_id") &&
+      /SALE-sale-\d+-\d+-OLSS-\d+/i.test(c.value),
+  );
+  if (meliExternalId) {
+    return {
+      platform: "Mercado Livre",
+      source: meliExternalId.source,
+    };
+  }// 3) Intermediador informado mas não reconhecido: usa o nome declarado.
   const intermed = candidates.find((c) => c.source === "infIntermed/idCadIntTran" && c.value);
   if (intermed) return { platform: clean(intermed.value), source: intermed.source };
   // 4) Número do pedido no padrão Mercado Livre (ex.: 2000017898048560).
