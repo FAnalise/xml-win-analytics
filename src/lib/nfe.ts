@@ -303,7 +303,7 @@ export function parseNfeXml(xml: string): ParsedInvoice {
         c.source.startsWith("obs"),
     );
     for (const c of fullSignals) {
-      const isFullText = /\bfull\b|fulfillment|centro\s*de\s*distribui|\bcd\s*meli\b|dep[óo]sito\s*mercado/i.test(
+      const isFullText = /\bfull\b|fulfillment|centro\s*de\s*distribui|\bcd\s*meli\b|dep[óo]sito\s*(?:mercado|tempor[áa]rio)/i.test(
         c.value,
       );
       const isMeliDelivery = c.source.startsWith("entrega") && matchCnpj(c.value) === "Mercado Livre";
