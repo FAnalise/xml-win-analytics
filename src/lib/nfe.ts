@@ -293,7 +293,14 @@ export function parseNfeXml(xml: string): ParsedInvoice {
   let platformSource = detected.source;
 
   // Mercado Full: fulfillment/logística do Mercado Livre (entrega em CD do ML).
-  if (platform === "Mercado Livre") {
+  if (
+  platform === "Mercado Livre" ||
+  candidates.some(
+    (c) =>
+      c.source === "infAdic/infCpl" &&
+      /dep[óo]sito\s*tempor[áa]rio/i.test(c.value),
+  )
+) {
     const fullSignals: Candidate[] = candidates.filter(
       (c) =>
         c.source.startsWith("entrega") ||
