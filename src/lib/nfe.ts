@@ -303,37 +303,21 @@ export function parseNfeXml(xml: string): ParsedInvoice {
   let platform = detected.platform;
   let platformSource = detected.source;
 
-  // Mercado Full: fulfillment/logística do Mercado Livre (entrega em CD do ML).
-  if (
-  platform === "Mercado Livre" ||
-  candidates.some(
+  // Mercado Full: identificar pelo texto de logística do XML.
+  const fulfillmentText = candidates.some(
     (c) =>
-      (c.source === "infAdic" || c.source === "infAdic/infCpl") &&
-      /dep[óo]sito\s*tempor[áa]rio/i.test(c.value),
-  )
-) {
-    const fullSignals: Candidate[] = candidates.filter(
-      (c) =>
-        c.source.startsWith("entrega") ||
+      /dep[óo]sito\s*tempor[áa]rio|mercado\s*full|fulfillment/i.test(c.value) &&
+      (c.source === "infAdic" ||
         c.source === "infAdic/infCpl" ||
-        c.source === "infAdic" ||
         c.source.startsWith("transporta") ||
-        c.source.startsWith("obs"),
-    );
-    for (const c of fullSignals) {
-      const isFullText = /\bfull\b|fulfillment|centro\s*de\s*distribui|\bcd\s*meli\b|dep[óo]sito\s*(?:mercado|tempor[áa]rio)/i.test(
-        c.value,
-      );
-      const isMeliDelivery = c.source.startsWith("entrega") && matchCnpj(c.value) === "Mercado Livre";
-      if (isFullText || isMeliDelivery) {
-        platform = "Fulfillment";
-        platformSource = c.source;
-        break;
-      }
-    }
-  }
+        c.source.startsWith("entrega")),
+  );
 
-  const detectedSeller = detectSeller(obsFields, candidates);
+  if (platform === "Mercado Livre" && fulfillmentText) {
+    platform = "Fulfillment";
+    platformSource = "sinal de logística Mercado Livre no XML";
+  }
+     const detectedSeller = detectSeller(obsFields, candidates);
   const seller = applySellerRules(platform, detectedSeller);
 
   const items: ParsedItem[] = [];
